@@ -16,5 +16,61 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
+    private final EmployeeRepository employeeRepository;
 
+
+    @Override
+    public List<EmployeeResponseDTO> getAllEmployees() {
+        return employeeRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeDTO) {
+        if (employeeRepository.findByEmail(employeeDTO.getEmail()).isPresent()) {
+            throw new EmailAlreadyExistsException("Email already exists");
+        }
+
+        Employee employee = convertToEntity(employeeDTO);
+        return convertToDTO(employeeRepository.save(employee));
+    }
+
+    @Override
+    public EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO employeeDTO) {
+        return employeeRepository.findById(id).map(employee -> {
+            if (employeeRepository.existsByEmailAndIdNot(employeeDTO.getEmail(), id)) {
+                throw new EmailAlreadyExistsException("Email already exists");
+            }
+
+            employee.setName(employeeDTO.getName());
+            employee.setEmail(employeeDTO.getEmail());
+            employee.setDepartment(employeeDTO.getDepartment());
+            return convertToDTO(employeeRepository.save(employee));
+        }).orElseThrow(() -> new ResourceNotFoundException("Employee not found"));
+    }
+
+    @Override
+    public void deleteEmployee(Long id) {
+        employeeRepository.deleteById(id);
+    }
+
+    private Employee convertToEntity(EmployeeRequestDTO dto) {
+        Employee employee = new Employee();
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setDepartment(dto.getDepartment());
+        return employee;
+    }
+
+    private EmployeeResponseDTO convertToDTO(Employee employee) {
+        EmployeeResponseDTO dto = new EmployeeResponseDTO();
+        dto.setId(employee.getId());
+        dto.setName(employee.getName());
+        dto.setEmail(employee.getEmail());
+        dto.setDepartment(employee.getDepartment().name());
+        dto.setCreatedAt(employee.getCreatedAt());
+        dto.setUpdatedAt(employee.getUpdatedAt());
+        return dto;
+    }
 }
