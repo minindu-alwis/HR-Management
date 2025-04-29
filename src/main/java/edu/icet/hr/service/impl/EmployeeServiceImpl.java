@@ -8,8 +8,10 @@ import edu.icet.hr.exception.ResourceNotFoundException;
 import edu.icet.hr.repository.EmployeeRepository;
 import edu.icet.hr.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+
+    final ModelMapper modelMapper;
 
 
     @Override
@@ -56,6 +60,16 @@ public class EmployeeServiceImpl implements EmployeeService {
             throw new ResourceNotFoundException("Employee not found");
         }
         employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<EmployeeResponseDTO> searchByName(String name) {
+        List<EmployeeResponseDTO> customerArrayList = new ArrayList<>();
+        List<Employee> all = employeeRepository.findByName(name);
+        all.forEach(customerEntity -> {
+            customerArrayList.add(modelMapper.map(customerEntity, EmployeeResponseDTO.class));
+        });
+        return customerArrayList;
     }
 
     private Employee convertToEntity(EmployeeRequestDTO dto) {

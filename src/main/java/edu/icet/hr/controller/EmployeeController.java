@@ -39,4 +39,9 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
     }
 
+    @GetMapping("/searchByName/{name}")
+    public List<EmployeeResponseDTO> searchByName(@PathVariable String name){
+        return employeeService.searchByName(name);
+    }
+
 }

@@ -10,4 +10,6 @@ public interface EmployeeService {
     EmployeeResponseDTO createEmployee(EmployeeRequestDTO employeeDTO);
     EmployeeResponseDTO updateEmployee(Long id, EmployeeRequestDTO employeeDTO);
     void deleteEmployee(Long id);
+
+    List<EmployeeResponseDTO> searchByName(String name);
 }
