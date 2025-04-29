@@ -1,6 +1,7 @@
 package edu.icet.hr.dto;
 
 import edu.icet.hr.util.Department;
+
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,9 +12,9 @@ import lombok.NoArgsConstructor;
 @Data
 public class EmployeeRequestDTO {
 
-    @NotBlank
-    @Pattern(regexp = "^[a-zA-Z ]+$")
-    @Size(max = 100)
+    @NotBlank(message = "Name is required")
+    @Pattern(regexp = "^[a-zA-Z ]+$", message = "Name must contain only letters and spaces")
+    @Size(max = 100, message = "Name must be less than 100 characters")
     private String name;
 
     @NotBlank
