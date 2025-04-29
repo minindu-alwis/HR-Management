@@ -3,6 +3,7 @@ package edu.icet.hr.controller;
 import edu.icet.hr.dto.EmployeeRequestDTO;
 import edu.icet.hr.dto.EmployeeResponseDTO;
 import edu.icet.hr.service.EmployeeService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -23,12 +24,12 @@ public class EmployeeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public EmployeeResponseDTO createEmployee(@RequestBody EmployeeRequestDTO employeeDTO) {
+    public EmployeeResponseDTO createEmployee(@Valid @RequestBody EmployeeRequestDTO employeeDTO) {
         return employeeService.createEmployee(employeeDTO);
     }
 
     @PutMapping("/{id}")
-    public EmployeeResponseDTO updateEmployee(@PathVariable Long id, @RequestBody EmployeeRequestDTO employeeDTO) {
+    public EmployeeResponseDTO updateEmployee(@PathVariable Long id, @Valid @RequestBody EmployeeRequestDTO employeeDTO) {
         return employeeService.updateEmployee(id, employeeDTO);
     }
 
